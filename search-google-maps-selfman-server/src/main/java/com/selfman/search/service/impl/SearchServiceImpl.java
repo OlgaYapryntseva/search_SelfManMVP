@@ -4,9 +4,9 @@ import com.google.maps.errors.ApiException;
 import com.selfman.search.client.MapsApiDetailsClient;
 import com.selfman.search.dto.SearchResultDto;
 import com.selfman.search.dto.details.PlacesDetailsByIdDto;
-import com.selfman.search.entity.Resource;
-import com.selfman.search.service.ICachingService;
-import com.selfman.search.service.INearbySearchService;
+import com.selfman.search.model.Resource;
+import com.selfman.search.service.interfaces.ElasticService;
+import com.selfman.search.service.interfaces.SearchService;
 import com.selfman.search.util.SearchResultMapper;
 import com.selfman.search.util.WebScrapper;
 import lombok.AccessLevel;
@@ -21,9 +21,9 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class NearbySearchService implements INearbySearchService {
+public class SearchServiceImpl implements SearchService {
     final MapsApiDetailsClient mapsApiDetailsClient;
-    final ICachingService cachingService;
+    final ElasticService cachingService;
 
     @Override
     public List<SearchResultDto> searchNearbyPlacesDetails(Double longitude, Double latitude, Double radius) 

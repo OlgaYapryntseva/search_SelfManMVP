@@ -2,7 +2,7 @@ package com.selfman.search.controller;
 
 import com.google.maps.errors.ApiException;
 import com.selfman.search.dto.SearchResultDto;
-import com.selfman.search.service.INearbySearchService;
+import com.selfman.search.service.interfaces.SearchService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,8 +19,8 @@ import java.util.List;
 @Tag(name = "Controller for general nearby search")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class NearbySearchController {
-    INearbySearchService searchService;
+public class SearchController {
+    SearchService searchService;
 
     @CrossOrigin
     @GetMapping

@@ -2,9 +2,9 @@ package com.selfman.search.service.impl;
 
 
 import com.selfman.search.dto.SearchResultDto;
-import com.selfman.search.entity.Resource;
-import com.selfman.search.service.ICachingService;
-import com.selfman.search.service.IKeywordSearchService;
+import com.selfman.search.model.Resource;
+import com.selfman.search.service.interfaces.ElasticService;
+import com.selfman.search.service.interfaces.KeywordSearchService;
 import com.selfman.search.util.SearchResultMapper;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +16,9 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class KeywordSearchService implements IKeywordSearchService {
+public class KeywordSearchServiceImpl implements KeywordSearchService {
     //MapsApiClient mapsApiClient;
-    final ICachingService cachingService;
+    final ElasticService cachingService;
 
     @Override
     public List<SearchResultDto> searchByKeywords(Double longitude, Double latitude, Double radius,String[] keywords) {

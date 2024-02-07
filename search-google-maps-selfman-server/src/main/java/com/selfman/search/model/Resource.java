@@ -1,4 +1,4 @@
-package com.selfman.search.entity;
+package com.selfman.search.model;
 
 import lombok.AccessLevel;
 import lombok.Getter;

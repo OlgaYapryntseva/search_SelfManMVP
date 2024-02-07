@@ -1,11 +1,12 @@
-package com.selfman.search.service;
+package com.selfman.search.service.interfaces;
 
 import com.selfman.search.dto.details.PlacesDetailsByIdDto;
-import com.selfman.search.entity.Resource;
+import com.selfman.search.model.Resource;
+
 import java.util.List;
 import java.util.Set;
 
-public interface ICachingService {
+public interface ElasticService {
     Resource saveResourceWithoutKeywords(PlacesDetailsByIdDto placeDescription, String resourceContent);
 
     Resource saveResourceWithKeywords(String[] keywords, PlacesDetailsByIdDto placeDescription, String resourceContent);

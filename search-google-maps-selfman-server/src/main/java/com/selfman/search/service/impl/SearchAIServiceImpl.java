@@ -8,7 +8,7 @@ import com.selfman.search.dto.SearchResultDto;
 import com.selfman.search.dto.details.PlacesDetailsByIdDto;
 import com.selfman.search.dto.palm2_api.Palm2ApiResponseDto;
 import com.selfman.search.exception.UnableToParseException;
-import com.selfman.search.service.IAISearchService;
+import com.selfman.search.service.interfaces.SearchAIService;
 import com.selfman.search.util.SearchResultMapper;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class AISearchService implements IAISearchService {
+public class SearchAIServiceImpl implements SearchAIService {
     MapsApiDetailsClient mapsApiDetailsClient;
     Palm2ApiClient palm2ApiClient;
 

@@ -1,11 +1,11 @@
 package com.selfman.search.service.impl;
 
 import com.selfman.search.dto.details.PlacesDetailsByIdDto;
-import com.selfman.search.entity.Keyword;
-import com.selfman.search.entity.Resource;
-import com.selfman.search.repo.KeywordRepo;
-import com.selfman.search.repo.ResourceRepo;
-import com.selfman.search.service.ICachingService;
+import com.selfman.search.model.Keyword;
+import com.selfman.search.model.Resource;
+import com.selfman.search.repositories.KeywordRepository;
+import com.selfman.search.repositories.ResourceRepository;
+import com.selfman.search.service.interfaces.ElasticService;
 import com.selfman.search.util.ResourceMapper;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +17,9 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class CachingService implements ICachingService {
-   final KeywordRepo keywordRepo;
-   final ResourceRepo resourceRepo;
+public class ElasticServiceImpl implements ElasticService {
+   final KeywordRepository keywordRepo;
+   final ResourceRepository resourceRepo;
 
     @Override
     public Resource saveResourceWithoutKeywords(PlacesDetailsByIdDto place, String resourceContent) {

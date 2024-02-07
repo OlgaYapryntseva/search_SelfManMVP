@@ -2,7 +2,8 @@ package com.selfman.search.controller;
 
 import com.google.maps.errors.ApiException;
 import com.selfman.search.dto.SearchResultDto;
-import com.selfman.search.service.INearbySearchService;
+import com.selfman.search.service.interfaces.SearchService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
@@ -16,8 +17,8 @@ import java.util.List;
 @Tag(name = "Controller for nearby search with AI keywords / industry analysis")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
-public class AINearbySearchController {
-	INearbySearchService iNearbySearchService;
+public class SearchAIController {
+	SearchService iNearbySearchService;
 
 	@CrossOrigin
 	@GetMapping("/search/nearby/ai")

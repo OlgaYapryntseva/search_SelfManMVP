@@ -2,7 +2,7 @@ package com.selfman.search.util;
 
 import com.selfman.search.dto.SearchResultDto;
 import com.selfman.search.dto.details.PlacesDetailsByIdDto;
-import com.selfman.search.entity.Resource;
+import com.selfman.search.model.Resource;
 
 import java.util.List;
 

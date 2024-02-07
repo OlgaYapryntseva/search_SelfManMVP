@@ -1,7 +1,7 @@
 package com.selfman.search.util;
 
 import com.selfman.search.dto.details.PlacesDetailsByIdDto;
-import com.selfman.search.entity.Resource;
+import com.selfman.search.model.Resource;
 
 public class ResourceMapper {
     public static Resource customPlaceDescriptionToResource(String resourceContent, PlacesDetailsByIdDto placesDetailsById) {
