@@ -1,0 +1,24 @@
+version: '3.7'
+services:
+  app:
+    container_name: SelfmanSearch
+    image: 01452/selfman_search:latest
+    ports:
+      - 8080:8080
+    networks:
+      - elk-network
+    links:
+      - elasticsearch:elasticsearch
+    command: /bin/sh -c "sleep 60 && java -jar /app/selfman_search.jar"
+  elasticsearch:
+    container_name: es762
+    image: elasticsearch:7.17.0
+    ports:
+      - 9200:9200
+    environment:
+      - discovery.type=single-node
+    networks:
+      - elk-network
+networks:
+  elk-network:
+    driver: bridge
