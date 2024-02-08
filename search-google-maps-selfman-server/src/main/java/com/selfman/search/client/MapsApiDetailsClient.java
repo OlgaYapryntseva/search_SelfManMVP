@@ -3,6 +3,9 @@ package com.selfman.search.client;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,13 +85,18 @@ public class MapsApiDetailsClient {
 		try {
 			String url = place.getWebsite();
 			if (url != null) {
-				if (Jsoup.connect(url).get().isBlock() == false) {
-					Document document = Jsoup.connect(url).get();
-					String src = document.getElementsByTag("img").get(0).attr("src");
-					String[] srcTrue = src.split("://");
-					if (src != null && srcTrue[0].equals("https")) {
-						place.setIcon(src);
-						System.out.println("place_url = " + place.getIcon());
+				String robotsTxtUrl = url + "/robots.txt";
+				String robotsTxtContect = Jsoup.connect(robotsTxtUrl).get().text();
+				Pattern pattern = Pattern.compile("(?!)^User-agent:\\*\nDisallow:/");
+				Matcher matcher = pattern.matcher(robotsTxtContect);
+				if (!matcher.find()) {
+					if (Jsoup.connect(url).get().isBlock() == false) {
+						Document document = Jsoup.connect(url).get();
+						String src = document.getElementsByTag("img").get(0).attr("src");
+						String[] srcTrue = src.split("://");
+						if (src != null && srcTrue[0].equals("https")) {
+							place.setIcon(src);
+						}
 					}
 				}
 			}

@@ -6,16 +6,22 @@ import com.selfman.search.client.Palm2ApiClient;
 import com.selfman.search.dto.SearchResultDto;
 import com.selfman.search.dto.details.PlacesDetailsByIdDto;
 import com.selfman.search.dto.palm2_api.Palm2ApiResponseDto;
+import com.selfman.search.exception.UnableToParseException;
 import com.selfman.search.service.interfaces.SearchAIService;
 import com.selfman.search.util.SearchResultMapper;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,10 +39,18 @@ public class SearchAIServiceImpl implements SearchAIService {
 			return List.of();
 		}
 		return places.stream().filter(cd -> cd.getWebsite() != null && !cd.getWebsite().isEmpty())
-				.map(this::getSearchResults).filter(Objects::nonNull).collect(Collectors.toList());
+				.map(t -> {
+					try {
+						return getSearchResults(t);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					return null;
+				}).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
-	private SearchResultDto getSearchResults(PlacesDetailsByIdDto place) {
+	private SearchResultDto getSearchResults(PlacesDetailsByIdDto place) throws IOException {
 		String[] titleDescription = this.parseTitleDescription(place.getWebsite());
 		Palm2ApiResponseDto palm2ApiResponseDto = palm2ApiClient.getPalm2IndustryKeywordsSummary(titleDescription);
 		if (palm2ApiResponseDto.getCandidates() == null) {
@@ -71,24 +85,26 @@ public class SearchAIServiceImpl implements SearchAIService {
 		return builder.toString();
 	}
 
-	private String[] parseTitleDescription(String uri) {
-//		try {
-//			if (uri != null && Jsoup.connect(uri).get().isBlock() == false) {
-//				Document doc = Jsoup.connect(uri).get();
-//				String title = doc.getElementsByTag("title").get(0).text();
-//		System.out.println("title = " + title);
-//				String description = doc.getElementsByTag("meta").get(0).attr("name","description").attr("content");
-//				System.out.println("d = " + description);
-//				return new String[] { title, description };
-//			}
-//			return new String[] { "", "" };
-//		} catch (IOException e) {
-//			throw new UnableToParseException("Unable to parse");
-//		}
-
-		 return new String[] {"None", "None"};
+	private String[] parseTitleDescription(String url) throws IOException {
+		if (url != null) {
+			String robotsTxtUrl = url + "/robots.txt";
+			String robotsTxtContect = Jsoup.connect(robotsTxtUrl).get().text();
+			Pattern pattern = Pattern.compile("(?!)^User-agent:\\*\nDisallow:/");
+			Matcher matcher = pattern.matcher(robotsTxtContect);
+			if (!matcher.find()) {
+				try {
+					Document doc = Jsoup.connect(url).get();
+					String title = parseTitle(doc);
+					String description = parseDescription(doc);
+					return new String[] { title, description };
+				} catch (IOException e) {
+					throw new UnableToParseException("Unable to parse");
+				}
+			}
+		}
+		return new String[] { "None", "None" };
 	}
-/*
+
 	private String parseDescription(Document doc) {
 		if (doc.select("meta[name=description]").isEmpty()) {
 			return "None";
@@ -102,5 +118,5 @@ public class SearchAIServiceImpl implements SearchAIService {
 		}
 		return doc.title();
 	}
-*/
+
 }
