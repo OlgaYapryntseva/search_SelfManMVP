@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SearchServiceImpl implements SearchService {
     final MapsApiDetailsClient mapsApiDetailsClient;
-    final ElasticService cachingService;
+    final ElasticService elasticService;
 
     @Override
     public List<SearchResultDto> searchNearbyPlacesDetails(Double longitude, Double latitude, Double radius) 
@@ -34,15 +34,15 @@ public class SearchServiceImpl implements SearchService {
         places.stream().forEach((place) -> {
             String resourceUrl = place.getWebsite();
             //If resource is not cached - scrap and save it
-            if (resourceUrl != null && !cachingService.checkIfResourceExistsByUrl(resourceUrl)) {
+            if (resourceUrl != null && !elasticService.checkIfResourceExistsByUrl(resourceUrl)) {
                 String resourceContent = WebScrapper.scrapResource(resourceUrl);  
-                resourcesFound.add(cachingService.saveResourceWithoutKeywords(place, resourceContent));
+                resourcesFound.add(elasticService.saveResourceWithoutKeywords(place, resourceContent));
             } else if (resourceUrl != null) {
-                resourcesFound.add(cachingService.findResourceByUrl(resourceUrl));
+                resourcesFound.add(elasticService.findResourceByUrl(resourceUrl));
             }
         });
         return resourcesFound.stream().map((resource -> {
-            List<String> foundKeywords = new ArrayList<>(cachingService.findKeywordsByResourceUrl(resource.getResourceUrl()));
+            List<String> foundKeywords = new ArrayList<>(elasticService.findKeywordsByResourceUrl(resource.getResourceUrl()));
             return SearchResultMapper.resourceToDto(resource, foundKeywords);
         })).collect(Collectors.toList());
     }

@@ -2,8 +2,7 @@ package com.selfman.search.controller;
 
 import com.google.maps.errors.ApiException;
 import com.selfman.search.dto.SearchResultDto;
-import com.selfman.search.service.interfaces.SearchService;
-
+import com.selfman.search.service.interfaces.SearchAIService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
@@ -18,7 +17,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class SearchAIController {
-	SearchService iNearbySearchService;
+	SearchAIService searchAIService;
 
 	@CrossOrigin
 	@GetMapping("/search/nearby/ai")
@@ -27,11 +26,6 @@ public class SearchAIController {
 			@RequestParam(name = "lng") Double longitude,
 			@RequestParam(name = "radius", required = false, defaultValue = "1000") Double radius)
 			throws ApiException, InterruptedException, IOException {
-		return iNearbySearchService.searchNearbyPlacesDetails(longitude, latitude, radius);
+		return searchAIService.searchNearbyProvidersWithAI(longitude, latitude, radius);
 	}
-
-
-
-	
-
 }

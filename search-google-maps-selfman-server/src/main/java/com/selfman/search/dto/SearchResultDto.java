@@ -17,5 +17,6 @@ public class SearchResultDto {
     List<String> keywords;
     String internationalPhone;
     Double rating;
+    String website;
     String logo;
 }

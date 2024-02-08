@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.List;
 
 public interface SearchAIService {
-    List<SearchResultDto> searchNearbyPlacesDetails(Double longitude, Double latitude, Double radius) throws ApiException, InterruptedException, IOException;
+    List<SearchResultDto> searchNearbyProvidersWithAI(Double longitude, Double latitude, Double radius) throws ApiException, InterruptedException, IOException;
 
 
 }

@@ -15,6 +15,7 @@ public class SearchResultMapper {
                 .industry(place.getTypes())
                 .keywords(keywords)
                 .rating(place.getRating())
+                .website(place.getWebsite())
                 .logo(place.getIcon())
                 .build();
     }
@@ -27,6 +28,7 @@ public class SearchResultMapper {
                 .industry(resource.getIndustry())
                 .keywords(keywords)
                 .rating(resource.getRating())
+                .website(resource.getResourceUrl())
                 .logo(resource.getLogo())
                 .build();
     }

@@ -25,7 +25,7 @@ public class SearchController {
     @CrossOrigin
     @GetMapping
     @Operation(summary = "Search nearby providers by current geo-position. Involves caching.")
-    public List<SearchResultDto> searchProvidersByKeywords(@RequestParam(name = "ltd") Double latitude,
+    public List<SearchResultDto> searchNearbyPlacesDetails(@RequestParam(name = "ltd") Double latitude,
                                                                  @RequestParam(name = "lng") Double longitude,
                                                                  @RequestParam(name = "radius", required = false, defaultValue = "1000") Double radius) throws ApiException, InterruptedException, IOException {
         return searchService.searchNearbyPlacesDetails(longitude, latitude, radius);
