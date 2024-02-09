@@ -24,11 +24,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class KeywordSearchServiceImpl implements KeywordSearchService {
-    MapsApiDetailsClient mapsApiDetailsClient;
+	
+    final MapsApiDetailsClient mapsApiDetailsClient;
     final ElasticService elasticService;
 
     @Override
-    public List<SearchResultDto> searchByKeywords(Double longitude, Double latitude, Double radius,String[] keywords) throws ApiException, InterruptedException, IOException {
+    public List<SearchResultDto> searchByKeywords(Double longitude, Double latitude, Double radius,String[] keywords) 
+    		throws ApiException, InterruptedException, IOException {
         String[] formattedNonBlankKeywords = prepareKeywords(keywords);
         //Search resources by cached keywords
         Set<Resource> resourcesFound = new HashSet<>();
@@ -37,8 +39,7 @@ public class KeywordSearchServiceImpl implements KeywordSearchService {
         resourcesFound.addAll(elasticService.findResourcesByNonCachedKeywords(formattedNonBlankKeywords));
         //If no results were found - make request to Google Maps API
         if (resourcesFound.isEmpty() || resourcesFound.size() <= 10) {
-            List<PlacesDetailsByIdDto> places = mapsApiDetailsClient.getNearbyDetailsProviders(longitude, latitude, radius);
-            
+            List<PlacesDetailsByIdDto> places = mapsApiDetailsClient.getNearbyDetailsProviders(longitude, latitude, radius);         
             places.forEach((place) -> {
                 String resourceUrl = place.getWebsite();
                 //If resource is not cached - scrap, cache it and add to results
