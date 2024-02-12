@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("search/keywords")
@@ -29,7 +30,8 @@ public class KeywordSearchController {
     		@RequestParam(name = "ltd") Double latitude,
             @RequestParam(name = "lng") Double longitude,
             @RequestParam(name = "radius", required = false, defaultValue = "1000") Double radius,
-            @RequestParam(name = "keywords") String[] keywords) throws ApiException, InterruptedException, IOException {
+            @RequestParam(name = "keywords") String[] keywords) 
+            		throws ApiException, InterruptedException, IOException, ExecutionException {
 
         return keywordSearchService.searchByKeywords(longitude, latitude, radius,keywords);
     }

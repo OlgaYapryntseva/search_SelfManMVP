@@ -6,6 +6,7 @@ import com.selfman.search.model.Resource;
 public class ResourceMapper {
     public static Resource customPlaceDescriptionToResource(String resourceContent, PlacesDetailsByIdDto placesDetailsById) {
         Resource resource = new Resource();
+        resource.setPlace_id(placesDetailsById.getPlace_id());
         resource.setResourceUrl(placesDetailsById.getWebsite());
         resource.setResourceContent(resourceContent);
         resource.setCompanyName(placesDetailsById.getName());

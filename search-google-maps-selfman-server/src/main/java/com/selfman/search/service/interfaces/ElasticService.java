@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Set;
 
 public interface ElasticService {
-    Resource saveResourceWithoutKeywords(PlacesDetailsByIdDto placeDescription, String resourceContent);
+	
+    Resource saveResourceWithOutKeywords(PlacesDetailsByIdDto placeDescription);
 
     Resource saveResourceWithKeywords(String[] keywords, PlacesDetailsByIdDto placeDescription, String resourceContent);
 
@@ -15,7 +16,7 @@ public interface ElasticService {
 
     List<Resource> findResourcesByNonCachedKeywords(String[] keywords);
 
-    boolean checkIfResourceExistsByUrl(String url);
+    boolean checkIfResourceExistsById(String placeId);
 
     Resource findResourceByUrl(String url);
 

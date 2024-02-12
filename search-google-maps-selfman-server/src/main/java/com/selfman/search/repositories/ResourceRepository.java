@@ -9,5 +9,6 @@ import java.util.List;
 
 @Repository
 public interface ResourceRepository extends ElasticsearchRepository<Resource, String> {
+	
     List<Resource> findByResourceContentContaining(String searchRequest);
 }

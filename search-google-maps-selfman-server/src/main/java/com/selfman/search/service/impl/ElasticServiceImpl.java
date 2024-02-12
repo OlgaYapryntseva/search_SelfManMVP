@@ -7,6 +7,7 @@ import com.selfman.search.repositories.KeywordRepository;
 import com.selfman.search.repositories.ResourceRepository;
 import com.selfman.search.service.interfaces.ElasticService;
 import com.selfman.search.util.ResourceMapper;
+import com.selfman.search.util.WebScrapper;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -22,9 +23,15 @@ public class ElasticServiceImpl implements ElasticService {
    final ResourceRepository resourceRepo;
 
     @Override
-    public Resource saveResourceWithoutKeywords(PlacesDetailsByIdDto place, String resourceContent) {
-        Resource newResource = ResourceMapper.customPlaceDescriptionToResource(resourceContent, place);
-        return resourceRepo.save(newResource);
+    public Resource saveResourceWithOutKeywords(PlacesDetailsByIdDto place) {
+		if (!checkIfResourceExistsById(place.getPlace_id())) {
+			String webSite = place.getWebsite();
+			String resourceContent = WebScrapper.scrapResource(webSite);
+			Resource newResource = ResourceMapper.customPlaceDescriptionToResource(resourceContent, place);
+			resourceRepo.save(newResource); 
+			return newResource;
+		}
+        return resourceRepo.findById(place.getPlace_id()).get();
     }
 
     @Override
@@ -69,8 +76,8 @@ public class ElasticServiceImpl implements ElasticService {
     }
 
     @Override
-    public boolean checkIfResourceExistsByUrl(String url) {
-        return resourceRepo.existsById(url);
+    public boolean checkIfResourceExistsById(String id) {
+        return resourceRepo.existsById(id);
     }
 
     @Override

@@ -10,6 +10,7 @@ import lombok.ToString;
 @Setter
 @ToString
 public class PlacesDetailsByIdDto {
+	String place_id;
     String name;
     String formatted_phone_number;
     String international_phone_number;
@@ -19,5 +20,6 @@ public class PlacesDetailsByIdDto {
     Double rating;
     String user_ratings_total;
     String website;  
-    String icon;   
+    String icon; 
+    List<PlacePhotoDto> photos;
 }

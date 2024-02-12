@@ -10,14 +10,13 @@ import com.selfman.search.service.interfaces.ElasticService;
 import com.selfman.search.service.interfaces.KeywordSearchService;
 import com.selfman.search.util.SearchResultMapper;
 import com.selfman.search.util.WebScrapper;
-
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,7 +29,7 @@ public class KeywordSearchServiceImpl implements KeywordSearchService {
 
     @Override
     public List<SearchResultDto> searchByKeywords(Double longitude, Double latitude, Double radius,String[] keywords) 
-    		throws ApiException, InterruptedException, IOException {
+    		throws ApiException, InterruptedException, IOException, ExecutionException {
         String[] formattedNonBlankKeywords = prepareKeywords(keywords);
         //Search resources by cached keywords
         Set<Resource> resourcesFound = new HashSet<>();
@@ -43,7 +42,7 @@ public class KeywordSearchServiceImpl implements KeywordSearchService {
             places.forEach((place) -> {
                 String resourceUrl = place.getWebsite();
                 //If resource is not cached - scrap, cache it and add to results
-                if (resourceUrl != null && !elasticService.checkIfResourceExistsByUrl(resourceUrl)) {
+                if (resourceUrl != null && !elasticService.checkIfResourceExistsById(place.getPlace_id())) {
                     String resourceContent = WebScrapper.scrapResource(resourceUrl);
                     resourcesFound.add(elasticService.saveResourceWithKeywords(formattedNonBlankKeywords, place, resourceContent));
                 }

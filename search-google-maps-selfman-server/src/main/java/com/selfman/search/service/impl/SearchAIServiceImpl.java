@@ -6,8 +6,9 @@ import com.selfman.search.client.Palm2ApiClient;
 import com.selfman.search.dto.SearchResultDto;
 import com.selfman.search.dto.details.PlacesDetailsByIdDto;
 import com.selfman.search.dto.palm2_api.Palm2ApiResponseDto;
+import com.selfman.search.exception.details.PlacesInLocationNotFound;
+import com.selfman.search.parser.ParserWebSiteServiceImpl;
 import com.selfman.search.service.interfaces.SearchAIService;
-import com.selfman.search.util.ParserWebSite;
 import com.selfman.search.util.SearchResultMapper;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -26,16 +27,16 @@ public class SearchAIServiceImpl implements SearchAIService {
 	
 	final MapsApiDetailsClient mapsApiDetailsClient;
 	final Palm2ApiClient palm2ApiClient;
-	final ParserWebSite parserWebSite;
+	final ParserWebSiteServiceImpl parserWebSite;
 	
 	@Override
 	public List<SearchResultDto> searchNearbyProvidersWithAI(Double longitude, Double latitude, Double radius)
 			throws ApiException, InterruptedException, IOException {
 		List<PlacesDetailsByIdDto> places = mapsApiDetailsClient.getNearbyDetailsProviders(longitude, latitude, radius);
-		if (places == null) {
-			return List.of();
+		if(places.size() < 0) {
+			throw new PlacesInLocationNotFound();
 		}
-		return places.stream().filter(cd -> cd.getWebsite() != null && !cd.getWebsite().isEmpty())
+		return places.stream().filter(p -> p.getWebsite() != null && !p.getWebsite().isEmpty())
 				.map(t -> {
 					try {
 						return getSearchResults(t);

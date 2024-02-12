@@ -23,7 +23,7 @@ import com.selfman.search.dto.places_api.search_nearby.PlacesLocationRestriction
 import com.selfman.search.dto.places_api.text_search.PlacesApiTextRequestDto;
 import com.selfman.search.exception.details.PlacesInLocationNotFound;
 import com.selfman.search.exception.details.UnableToRetrieveException;
-import com.selfman.search.util.ParserWebSite;
+import com.selfman.search.parser.ParserWebSiteServiceImpl;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -34,10 +34,10 @@ import lombok.experimental.FieldDefaults;
 @RequiredArgsConstructor
 @Data
 public class MapsApiDetailsClient {
-	
+
 	@Autowired
 	final RestTemplate client;
-	final ParserWebSite parserWebSite;
+	final ParserWebSiteServiceImpl parserWebSite;
 
 	@Value("${maps.api.key_1}")
 	String apiKey;
@@ -45,30 +45,53 @@ public class MapsApiDetailsClient {
 	final static int MAX_RESULT_COUNT = 10;
 	final static String PLACES_NEARBY_API_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
 	final static String PLACES_NEARBY_API_URL_DETAILS = "https://maps.googleapis.com/maps/api/place/details/json";
-	final static List<String> NEARBY_INCLUDED_TYPES = List.of("wholesaler", "store");
+	final static String PLACES_API_PHOTO = "https://maps.googleapis.com/maps/api/place/photo";
+
+//	final static List<String> TYPES = List.of("wholesaler", "store");
+	final static List<String> TYPES = List.of("manufacturing","establishment.manufacturing");
+//	final static List<String> TYPES = List.of("establishment.manufacturing", "factory", "establishment.industrial", 
+//			"establishment.plant", "production_site", "shop.craft");
+//	final static List<String> TYPES = List.of("manufacturer", "factory", "industrial", 
+//			"plant", "workshop", "combine", "production_site");
 	final static String PLACES_TEXT_API_URL = "https://places.googleapis.com/v1/places:searchText";
 	final static String API_FIELD_MASK = "places.displayName,places.websiteUri,places.adrFormatAddress,places.internationalPhoneNumber";
 
+	
 	public List<PlacesDetailsByIdDto> getNearbyDetailsProviders(Double longitude, Double latitude, Double radius)
 			throws ApiException, InterruptedException, IOException {
 		try {
-			int value = (int) Math.round(radius);
-			String url = UriComponentsBuilder.fromUriString(PLACES_NEARBY_API_URL)
-					.queryParam("location", new LatLng(latitude, longitude)).queryParam("radius", value)
-					.queryParam("type", NEARBY_INCLUDED_TYPES).queryParam("key", apiKey).build().toString();
-			List<PlacesIdDto> placesId = client.getForObject(url, PlacesByLocationResponseDto.class).getResults();
-			if (placesId.size() < 0) {
-				throw new PlacesInLocationNotFound();
-			}
 			List<PlacesDetailsByIdDto> placesResponse = new ArrayList<>();
-			placesId.stream().forEach(p -> {
-				String url1 = UriComponentsBuilder.fromUriString(PLACES_NEARBY_API_URL_DETAILS)
-						.queryParam("place_id", p.getPlace_id()).queryParam("key", apiKey).build().toString();
-			    PlacesDetailsByIdDto place = client.getForObject(url1, PlacesDetailsResponsDto.class).getResult();
-				parserWebSite.parseLogoExtractor(place);
-				placesResponse.add(place);
-			});
-			System.out.println("place size= " + placesResponse.size());
+				int value = (int) Math.round(radius);
+				String url = UriComponentsBuilder.fromUriString(PLACES_NEARBY_API_URL)
+						.queryParam("location", new LatLng(latitude, longitude)).queryParam("radius", value)
+						.queryParam("types", String.join("|", TYPES)).queryParam("key", apiKey).build().toString();
+System.out.println("URL = " + url);
+				List<PlacesIdDto> placesId = client.getForObject(url, PlacesByLocationResponseDto.class).getResults();
+				if (placesId.size() < 0) {
+					throw new PlacesInLocationNotFound();
+				}
+				placesId.stream().forEach(p -> {
+					System.out.println("place = " + p.getPlace_id());
+					String url1 = UriComponentsBuilder.fromUriString(PLACES_NEARBY_API_URL_DETAILS)
+							.queryParam("place_id", p.getPlace_id()).queryParam("key", apiKey).build().toString();
+					PlacesDetailsByIdDto place = client.getForObject(url1, PlacesDetailsResponsDto.class).getResult();
+					if(place.getWebsite() == null) {
+						place.setIcon("https://shetko.online/static/media/selfman.0dfe4b35a490aa138b91.png");
+					}
+					
+//				parserWebSite.parseLogoExtractor(place);
+//			    if(place.getPhotos() != null && place.getPhotos().size() > 0) {
+//			    	String photoReference = place.getPhotos().get(0).getPhoto_reference();
+//			    	String urlPhoto = UriComponentsBuilder.fromUriString(PLACES_API_PHOTO)
+//			    			.queryParam("maxwidth", 400)
+//		                 	.queryParam("photoreference", photoReference)
+//			                .queryParam("key", apiKey).build().toString();
+//			    	place.setIcon(urlPhoto);
+//			    }
+					
+					placesResponse.add(place);
+				});
+				System.out.println("place size = " + placesResponse.size());
 			return placesResponse;
 		} catch (PlacesInLocationNotFound e) {
 			e.getMessage();

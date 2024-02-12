@@ -3,16 +3,16 @@ package com.selfman.search.controller;
 import com.google.maps.errors.ApiException;
 import com.selfman.search.dto.SearchResultDto;
 import com.selfman.search.service.interfaces.SearchService;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
-
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+
 
 @RestController
 @RequestMapping("search/nearby/main")
@@ -20,14 +20,25 @@ import java.util.List;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SearchController {
-    SearchService searchService;
+	SearchService searchService;
 
-    @CrossOrigin
-    @GetMapping
-    @Operation(summary = "Search nearby providers by current geo-position. Involves caching.")
-    public List<SearchResultDto> searchNearbyPlacesDetails(@RequestParam(name = "ltd") Double latitude,
-                                                                 @RequestParam(name = "lng") Double longitude,
-                                                                 @RequestParam(name = "radius", required = false, defaultValue = "1000") Double radius) throws ApiException, InterruptedException, IOException {
-        return searchService.searchNearbyPlacesDetails(longitude, latitude, radius);
-    }
+	@CrossOrigin
+	@GetMapping
+	@Operation(summary = "Search nearby providers by current geo-position. Involves caching.")
+	public List<SearchResultDto> searchNearbyPlacesDetails(@RequestParam(name = "ltd") Double latitude,
+			@RequestParam(name = "lng") Double longitude,
+			@RequestParam(name = "radius", required = false, defaultValue = "1000") Double radius) 
+					throws ApiException, InterruptedException, IOException, ExecutionException {
+//		CompletableFuture<List<SearchResultDto>> futures = CompletableFuture.supplyAsync(() ->
+//				{
+//					try {
+//						return searchService.searchNearbyPlacesDetails(longitude, latitude, radius);
+//					} catch (ApiException | InterruptedException | IOException | ExecutionException e) {
+//						e.printStackTrace();
+//					}
+//					return null;
+//				});	
+//		return futures.join();
+		return searchService.searchNearbyPlacesDetails(longitude, latitude, radius);
+	}
 }

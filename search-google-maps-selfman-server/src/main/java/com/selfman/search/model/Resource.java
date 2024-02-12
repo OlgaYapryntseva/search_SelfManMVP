@@ -15,8 +15,11 @@ import org.springframework.data.elasticsearch.annotations.Document;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Resource {
-    @Id
-    String resourceUrl;
+//    @Id
+//    String resourceUrl;
+	@Id
+    String place_id;
+	String resourceUrl;
     String resourceContent;
     String companyName;
     String countryLocality;

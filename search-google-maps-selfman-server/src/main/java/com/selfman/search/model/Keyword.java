@@ -18,6 +18,7 @@ import java.util.List;
 public class Keyword {
     @Id
     String word;
+    String place_id;
     @Field(type = FieldType.Nested, includeInParent = true)
     List<Resource> resources;
 }
